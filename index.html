@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>StudLab - Bientôt disponible</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Stud<span>Lab</span></div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-copy">
+            <div class="hero-kicker">Bientôt disponible</div>
+
+            <h1>Révise plus vite.<br>Retiens mieux.</h1>
+
+            <p>
+                StudLab arrive bientôt avec des flashcards et QCM ultra efficaces pour le bac.
+                Commence par HGGSP, puis étends tes révisions à toutes les matières.
+            </p>
+
+            <div class="hero-actions">
+                <a href="https://instagram.com/studlab.fr" target="_blank" class="btn">
+                    Suivre sur Instagram
+                </a>
+
+                <button class="btn btn-ghost" onclick="copyLink()">
+                    Partager le projet
+                </button>
+            </div>
+
+            <div class="hero-pills">
+                <span>Flashcards efficaces</span>
+                <span>QCM bac</span>
+                <span>HGGSP</span>
+            </div>
+        </div>
+
+        <div class="hero-side">
+            <div class="home-panel preview-panel">
+                <div class="card-container">
+                    <div class="flashcard-demo" onclick="this.classList.toggle('flipped')">
+                        <div class="card-face card-face-front">
+                            <span class="tag">Définition</span>
+                            <h3>Qu’est-ce que la puissance en HGGSP ?</h3>
+                            <p class="click-hint">Clique pour voir</p>
+                        </div>
+
+                        <div class="card-face card-face-back">
+                            <h3>
+                                Capacité d’un acteur à influencer les autres acteurs sur la scène internationale
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="beta-banner">
+                <div class="beta-dot">BETA</div>
+                <div>
+                    <strong>Lancement imminent</strong>
+                    <p>Inscris-toi bientôt pour accéder aux premières versions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        © 2026 StudLab — Le labo des révisions efficaces
+    </footer>
+
+    <script>
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Lien copié !");
+        }
+    </script>
+
+</body>
+</html>
