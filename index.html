@@ -1,561 +1,139 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>IEP Histoire — Révisions</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Space+Mono:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0e0d0b;--surface:#1a1814;--card:#211f1a;--border:#3a3630;--gold:#c9a84c;--gold-dim:#7a6330;--red:#c0392b;--green:#27ae60;--text:#e8e0d0;--text-dim:#8a8070;--accent:#e8c87a;}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overscroll-behavior:none;}
-body{background:var(--bg);color:var(--text);font-family:'Crimson Pro',serif;font-size:18px;overflow-x:hidden;touch-action:manipulation;}
-.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn .3s ease;}
-.screen.active{display:flex;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.home-header{background:var(--surface);border-bottom:1px solid var(--border);padding:24px 20px 18px;position:relative;overflow:hidden;}
-.home-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-.stamp{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
-.home-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;line-height:1.1;color:var(--accent);}
-.home-sub{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:6px;letter-spacing:1px;}
-.timer-badge{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--gold-dim);border-radius:4px;padding:5px 11px;margin-top:12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 16px;}
-.stat-box{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px 6px;text-align:center;}
-.stat-num{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--gold);display:block;}
-.stat-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
-.modes-title{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;padding:0 16px 8px;}
-.mode-btn{display:flex;align-items:center;gap:14px;margin:0 16px 8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all .2s;text-align:left;position:relative;overflow:hidden;}
-.mode-btn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);transform:scaleY(0);transform-origin:bottom;transition:transform .2s;}
-.mode-btn:active::before{transform:scaleY(1);}
-.mode-btn:active{background:#2a261f;border-color:var(--gold-dim);}
-.mode-icon{font-size:26px;width:40px;text-align:center;flex-shrink:0;}
-.mode-info{flex:1;}
-.mode-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--text);display:block;}
-.mode-desc{font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-dim);font-style:italic;margin-top:2px;}
-.mode-arrow{color:var(--gold-dim);font-size:20px;font-family:'Space Mono',monospace;}
-.sep{border:none;border-top:1px solid var(--border);margin:0 16px 12px;}
-.topbar{display:flex;align-items:center;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);gap:10px;position:sticky;top:0;z-index:10;}
-.back-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 10px;border-radius:4px;cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;transition:all .2s;flex-shrink:0;}
-.back-btn:active{border-color:var(--gold);color:var(--gold);}
-.topbar-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--accent);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.progress-pill{font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);background:var(--card);border:1px solid var(--gold-dim);border-radius:20px;padding:4px 10px;flex-shrink:0;}
-.progress-bar-wrap{height:3px;background:var(--border);}
-.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width .4s ease;}
-.cat-list{flex:1;padding:14px 16px;overflow-y:auto;}
-.cat-all{display:flex;align-items:center;justify-content:center;background:#1e1a10;border:1px solid var(--gold-dim);border-radius:8px;padding:14px;margin-bottom:8px;cursor:pointer;font-family:'Space Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;transition:all .15s;text-align:center;}
-.cat-all:active{background:rgba(201,168,76,.15);}
-.cat-item{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:7px;cursor:pointer;transition:all .15s;}
-.cat-item:active{border-color:var(--gold-dim);background:#2a261f;}
-.cat-name{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.3;}
-.cat-count{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold-dim);flex-shrink:0;margin-left:8px;}
-.card-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;}
-.flip-card{width:100%;max-width:420px;height:240px;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.175,.885,.32,1.275);cursor:pointer;}
-.flip-card.flipped{transform:rotateY(180deg);}
-.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;}
-.flip-front{background:var(--card);border:1px solid var(--border);}
-.flip-back{background:#1e1a10;border:1px solid var(--gold-dim);transform:rotateY(180deg);}
-.flip-front::before{content:'QUESTION';position:absolute;top:13px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--gold-dim);}
-.flip-back::before{content:'RÉPONSE';position:absolute;top:13px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--gold);}
-.card-q{font-family:'Crimson Pro',serif;font-size:17px;line-height:1.5;color:var(--text);}
-.card-a{font-family:'Crimson Pro',serif;font-size:15px;line-height:1.5;color:var(--accent);}
-.card-hint{position:absolute;bottom:12px;font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:1px;}
-.swipe-hint{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px;padding-bottom:8px;}
-.card-actions{display:flex;gap:10px;padding:0 16px 16px;width:100%;max-width:420px;margin:0 auto;}
-.action-btn{flex:1;padding:13px 4px;border:1px solid;border-radius:8px;background:none;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;text-transform:uppercase;}
-.btn-wrong{border-color:var(--red);color:var(--red);}
-.btn-wrong:active{background:rgba(192,57,43,.15);}
-.btn-ok{border-color:var(--text-dim);color:var(--text-dim);}
-.btn-ok:active{background:rgba(138,128,112,.15);}
-.btn-right{border-color:var(--green);color:var(--green);}
-.btn-right:active{background:rgba(39,174,96,.15);}
-.quiz-body{flex:1;padding:16px;overflow-y:auto;}
-.question-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
-.question-text{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:18px;}
-.choices{display:flex;flex-direction:column;gap:8px;}
-.choice{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 13px;cursor:pointer;transition:all .15s;text-align:left;font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.4;width:100%;}
-.choice-letter{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold-dim);flex-shrink:0;margin-top:2px;width:16px;}
-.choice:active{border-color:var(--gold-dim);background:#2a261f;}
-.choice.correct{border-color:var(--green)!important;background:rgba(39,174,96,.1)!important;}
-.choice.wrong{border-color:var(--red)!important;background:rgba(192,57,43,.1)!important;opacity:.7;}
-.choice.disabled{pointer-events:none;}
-.explanation-box{margin-top:12px;background:#1e1a10;border:1px solid var(--gold-dim);border-radius:8px;padding:12px 13px;font-family:'Crimson Pro',serif;font-style:italic;font-size:14px;color:var(--text-dim);display:none;line-height:1.6;}
-.explanation-box.show{display:block;animation:fadeIn .3s;}
-.next-quiz-btn{display:none;width:100%;margin-top:12px;padding:14px;background:var(--gold);border:none;border-radius:8px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;color:#0e0d0b;cursor:pointer;font-weight:700;text-transform:uppercase;}
-.next-quiz-btn.show{display:block;animation:fadeIn .3s;}
-.blitz-timer-ring{display:flex;align-items:center;justify-content:center;padding:12px 0 4px;}
-.ring-wrap{position:relative;width:76px;height:76px;}
-.ring-svg{transform:rotate(-90deg);}
-.ring-bg{fill:none;stroke:var(--border);stroke-width:6;}
-.ring-fill{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s;}
-.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--gold);}
-.blitz-q{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;line-height:1.4;color:var(--text);padding:8px 18px 14px;text-align:center;min-height:95px;display:flex;align-items:center;justify-content:center;}
-.blitz-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 12px;flex:1;}
-.blitz-choice{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 8px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);text-align:center;line-height:1.4;transition:all .12s;display:flex;align-items:center;justify-content:center;min-height:68px;}
-.blitz-choice:active{transform:scale(.97);}
-.blitz-choice.correct{border-color:var(--green);background:rgba(39,174,96,.15);pointer-events:none;}
-.blitz-choice.wrong{border-color:var(--red);background:rgba(192,57,43,.12);opacity:.7;pointer-events:none;}
-.blitz-choice.reveal{border-color:var(--green);background:rgba(39,174,96,.08);pointer-events:none;}
-.blitz-choice.disabled{pointer-events:none;opacity:.5;}
-.blitz-score-bar{display:flex;justify-content:space-between;padding:0 16px 8px;font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:1px;}
-.blitz-score-bar .score{color:var(--gold);}
-#results{align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
-.result-icon{font-size:56px;margin-bottom:14px;}
-.result-score{font-family:'Playfair Display',serif;font-size:54px;font-weight:700;color:var(--gold);line-height:1;}
-.result-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin:8px 0 20px;}
-.result-msg{font-family:'Crimson Pro',serif;font-style:italic;font-size:18px;color:var(--text-dim);margin-bottom:28px;max-width:300px;line-height:1.5;}
-.result-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;}
-.result-btn{padding:15px;border-radius:8px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;}
-.result-btn-primary{background:var(--gold);border:none;color:#0e0d0b;font-weight:700;}
-.result-btn-secondary{background:none;border:1px solid var(--border);color:var(--text-dim);}
-.flash{position:fixed;inset:0;background:rgba(201,168,76,.15);pointer-events:none;opacity:0;z-index:500;transition:opacity .1s;}
-.flash.go{opacity:1;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudLab — Bientôt disponible</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body>
-<div class="flash" id="flash"></div>
-<div id="home" class="screen active">
-  <div class="home-header">
-    <div class="stamp">CONCOURS COMMUN IEP · HISTOIRE</div>
-    <div class="home-title">Révisions<br>Histoire</div>
-    <div class="home-sub">11 CHAPITRES · TES FICHES MANUSCRITES</div>
-    <div class="timer-badge">⏱ 2h de trajet — Bonne route !</div>
-  </div>
-  <div class="stats-row">
-    <div class="stat-box"><span class="stat-num" id="stat-total">0</span><div class="stat-label">Fiches</div></div>
-    <div class="stat-box"><span class="stat-num" id="stat-score">—</span><div class="stat-label">Moy. Quiz</div></div>
-    <div class="stat-box"><span class="stat-num" id="stat-mastered">0</span><div class="stat-label">Maîtrisées</div></div>
-  </div>
-  <hr class="sep">
-  <div class="modes-title">Choisir un mode</div>
-  <button class="mode-btn" onclick="goMode('flash')"><div class="mode-icon">🃏</div><div class="mode-info"><span class="mode-name">Flashcards</span><div class="mode-desc">Retourne, évalue-toi, progresse</div></div><div class="mode-arrow">›</div></button>
-  <button class="mode-btn" onclick="goMode('quiz')"><div class="mode-icon">📜</div><div class="mode-info"><span class="mode-name">Quiz QCM</span><div class="mode-desc">4 choix + explications immédiates</div></div><div class="mode-arrow">›</div></button>
-  <button class="mode-btn" onclick="goMode('blitz')" style="margin-bottom:24px;"><div class="mode-icon">⚡</div><div class="mode-info"><span class="mode-name">Blitz</span><div class="mode-desc">15 sec — bonus temps + série</div></div><div class="mode-arrow">›</div></button>
-</div>
-<div id="flash-cats" class="screen"><div class="topbar"><button class="back-btn" onclick="showScreen('home')">← Retour</button><div class="topbar-title">🃏 Flashcards</div></div><div class="cat-list" id="flash-cat-list"></div></div>
-<div id="quiz-cats" class="screen"><div class="topbar"><button class="back-btn" onclick="showScreen('home')">← Retour</button><div class="topbar-title">📜 Quiz QCM</div></div><div class="cat-list" id="quiz-cat-list"></div></div>
-<div id="blitz-cats" class="screen"><div class="topbar"><button class="back-btn" onclick="showScreen('home')">← Retour</button><div class="topbar-title">⚡ Blitz</div></div><div class="cat-list" id="blitz-cat-list"></div></div>
-<div id="flashcards" class="screen">
-  <div class="topbar"><button class="back-btn" onclick="showScreen('flash-cats')">← Cats</button><div class="topbar-title" id="flash-title">Flashcards</div><div class="progress-pill" id="flash-prog">1/20</div></div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="flash-bar" style="width:0%"></div></div>
-  <div class="card-area">
-    <div class="flip-card" id="flip-card" onclick="flipCard()">
-      <div class="flip-face flip-front"><div class="card-q" id="card-q"></div><div class="card-hint">Tap pour révéler</div></div>
-      <div class="flip-face flip-back"><div class="card-a" id="card-a"></div><div class="card-hint">Évalue ton niveau ↓</div></div>
-    </div>
-  </div>
-  <div class="swipe-hint">← RATÉ · HÉSITÉ · SU →</div>
-  <div class="card-actions">
-    <button class="action-btn btn-wrong" onclick="rateCard(0)">✗ Raté</button>
-    <button class="action-btn btn-ok" onclick="rateCard(1)">~ Hésité</button>
-    <button class="action-btn btn-right" onclick="rateCard(2)">✓ Su !</button>
-  </div>
-</div>
-<div id="quiz" class="screen">
-  <div class="topbar"><button class="back-btn" onclick="showScreen('quiz-cats')">← Cats</button><div class="topbar-title">Quiz</div><div class="progress-pill" id="quiz-prog">1/10</div></div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="quiz-bar" style="width:0%"></div></div>
-  <div class="quiz-body">
-    <div class="question-num" id="q-num">QUESTION 01</div>
-    <div class="question-text" id="q-text"></div>
-    <div class="choices" id="choices"></div>
-    <div class="explanation-box" id="explanation"></div>
-    <button class="next-quiz-btn" id="next-quiz-btn" onclick="nextQuiz()">Question suivante →</button>
-  </div>
-</div>
-<div id="blitz" class="screen">
-  <div class="topbar"><button class="back-btn" onclick="stopBlitz()">← Stop</button><div class="topbar-title">⚡ Blitz</div><div class="progress-pill" id="blitz-prog">1/15</div></div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="blitz-bar" style="width:0%"></div></div>
-  <div class="blitz-timer-ring"><div class="ring-wrap"><svg class="ring-svg" width="76" height="76" viewBox="0 0 76 76"><circle class="ring-bg" cx="38" cy="38" r="32"/><circle class="ring-fill" id="ring-fill" cx="38" cy="38" r="32" stroke-dasharray="201.1" stroke-dashoffset="0"/></svg><div class="ring-num" id="ring-num">15</div></div></div>
-  <div class="blitz-q" id="blitz-q">Question</div>
-  <div class="blitz-score-bar"><span>SCORE</span><span class="score" id="blitz-score-display">0 pts</span><span id="blitz-streak"></span></div>
-  <div class="blitz-choices" id="blitz-choices"></div>
-</div>
-<div id="results" class="screen">
-  <div class="result-icon" id="result-icon">🏆</div>
-  <div class="result-score" id="result-score">18/20</div>
-  <div class="result-label" id="result-mode-label">Terminé</div>
-  <div class="result-msg" id="result-msg">Excellent !</div>
-  <div class="result-btns">
-    <button class="result-btn result-btn-primary" id="result-retry">Recommencer</button>
-    <button class="result-btn result-btn-secondary" onclick="showScreen('home')">← Accueil</button>
-  </div>
-</div>
-<script>
-<script>
 
-const DATA={categories:[
-{id:"c1",name:"Crise de 1929",emoji:"📉",
-flashcards:[
-{q:"Quand et comment démarre la crise de 1929 ?",a:"24 octobre 1929 : 'Jeudi noir' → krach boursier Wall Street. Bulle spéculative : 120M d'Américains dont 4% possèdent des actions."},
-{q:"Quelles sont les conséquences sociales de la crise ?",a:"Chômage : 1/3 population EUA ; 4% en France. Prod. industrielle -30%, prix agricoles -50%. 1350 banques en faillite en 1930."},
-{q:"Qu'est-ce que le New Deal de Roosevelt (1933) ?",a:"Dévaluation du dollar, intervention de l'État dans les banques et le secteur agricole. Politique keynésienne de relance contre la dépression."},
-{q:"Quelle est la réponse libérale d'Hoover et de Laval à la crise ?",a:"Hoover (EUA) : capitaliste, non-interventionniste → échec. Pierre Laval (FR) : déflation et protectionnisme → échec."},
-{q:"Quelles sont les mesures sociales du Front Populaire français (1936) ?",a:"Élection du Front Populaire 1936 → semaine de 48h à 40h et 2 semaines de congés payés (accords Matignon)."},
-{q:"Pourquoi la spéculation boursière était-elle si forte dans les années 1920 ?",a:"Prospérité des années 20, impression de profits faciles en Bourse. Pouvoir d'achat ouvrier en hausse. Bulle spéculative : valeur des actions ne correspond plus à la réalité."},
-{q:"Comment la crise américaine se propage-t-elle en Europe ?",a:"Les banques américaines rapatrient leurs capitaux d'Europe (UE, Angleterre, Autriche). Crise bancaire puis sociale : chômage, baisse de production, crise agricole."},
-],
-quiz:[
-{q:"Quelle est la date du krach boursier de Wall Street ?",choices:["15 octobre 1929","24 octobre 1929","3 novembre 1929","12 décembre 1929"],correct:1,expl:"Le 'Jeudi noir', 24 octobre 1929 : effondrement de la Bourse de Wall Street, déclenchant la Grande Dépression mondiale."},
-{q:"Combien d'établissements bancaires font faillite aux EUA en 1930 ?",choices:["250","750","1350","3000"],correct:2,expl:"1350 banques font faillite en 1930. Les débiteurs ne peuvent rembourser, déclenchant une crise bancaire qui se propage à l'Europe."},
-{q:"Que fait Roosevelt avec le New Deal (1933) ?",choices:["Il augmente les impôts","Il dévalue le dollar et soutient banques et agriculture","Il abandonne le protectionnisme","Il privatise les services publics"],correct:1,expl:"Le New Deal : dévaluation du dollar, intervention étatique dans les banques et l'agriculture. Politique keynésienne de relance."},
-{q:"Quelle mesure clé adopte le Front Populaire français en 1936 ?",choices:["La retraite à 60 ans","La semaine de 40h et 2 semaines de congés payés","La nationalisation des banques","La suppression du service militaire"],correct:1,expl:"Le Front Populaire (1936) instaure la semaine de 40h et 2 semaines de congés payés (accords Matignon), avancées sociales majeures."},
-]},
-{id:"c2",name:"Régimes totalitaires",emoji:"🔴",
-flashcards:[
-{q:"Quelles sont les origines communes des régimes totalitaires ?",a:"Frustrations de la 1ère GM : Italie (victoire mutilée), Allemagne (traité de Versailles = 'diktat'), Russie (tsar contesté). Crise éco majeure, inégalités, états incapables de se réformer."},
-{q:"Quelles sont les caractéristiques communes des totalitarismes ?",a:"Concentration du pouvoir (Führer/Duce/vodjd). Sociétés soumises (Jeunesses hitlériennes). Règne de la terreur : NKVD + Goulags (URSS), Gestapo (ALL)."},
-{q:"Quelles sont les différences idéologiques entre les régimes totalitaires ?",a:"NAZI : antisémitisme, hiérarchie des races. Italie : fascisme. URSS : communisme. Économie planifiée en URSS, dirigée en Italie et Allemagne."},
-{q:"Qu'est-ce que l'Axe Rome-Berlin (1936) ?",a:"1936 : alliance Allemagne nazie + Italie fasciste (Mussolini). Noyau de la coalition de l'Axe dans la WWII avec le Japon."},
-{q:"Qu'est-ce que le pacte germano-soviétique (1939) ?",a:"Pacte de non-agression Hitler-Staline (août 1939). Permet à Hitler d'envahir la Pologne sans craindre l'URSS. Déclenche la WWII."},
-{q:"Comment l'Allemagne nazie bouscule-t-elle l'Europe avant 1939 ?",a:"Anschluss (annexion Autriche) mars 1938, Sudètes sept. 1938 (conférence de Munich = apaisement), puis invasion Pologne 1939 → début WWII."},
-{q:"Pourquoi le traité de Versailles alimente-t-il la montée du nazisme ?",a:"L'Allemagne le vit comme un 'diktat' humiliant : clause de culpabilité (art. 231), réparations, pertes territoriales. Hitler exploite ce ressentiment nationaliste."},
-],
-quiz:[
-{q:"Comment appelle-t-on l'annexion de l'Autriche par l'Allemagne en 1938 ?",choices:["La Blitzkrieg","L'Anschluss","Le Pacte tripartite","L'Ostpolitik"],correct:1,expl:"L'Anschluss (13 mars 1938) : annexion de l'Autriche par l'Allemagne nazie, violation du traité de Saint-Germain-en-Laye (1919)."},
-{q:"Quel pacte Hitler signe-t-il avec Staline en août 1939 ?",choices:["Pacte Briand-Kellogg","Pacte de l'Acier","Pacte germano-soviétique","Protocole de Munich"],correct:2,expl:"Le pacte germano-soviétique (août 1939) est un pacte de non-agression qui libère Hitler à l'est pour attaquer la Pologne et déclencher la WWII."},
-{q:"Quel est l'organe de répression soviétique (avec les Goulags) ?",choices:["La Stasi","Le KGB","Le NKVD","L'Ogpu"],correct:2,expl:"Le NKVD (police secrète) et le réseau des Goulags (camps de travail forcé) incarnent la terreur stalinienne, comme la Gestapo en Allemagne nazie."},
-{q:"Qu'est-ce que la 'victoire mutilée' pour l'Italie après 1918 ?",choices:["L'Italie n'a pas reçu les territoires promis malgré sa victoire","L'Italie a perdu la guerre","L'Italie a été occupée","L'Italie a subi des réparations"],correct:0,expl:"L'Italie sort victorieuse de 1918 mais n'obtient pas les territoires (Dalmatie, Fiume) promis par les Alliés. Ce sentiment nourrit le fascisme de Mussolini."},
-]},
-{id:"c3",name:"Seconde Guerre Mondiale",emoji:"⚔️",
-flashcards:[
-{q:"Quelles sont les grandes étapes militaires de la WWII ?",a:"1939 invasion Pologne. Juin 1940 France capitule. Juin 1941 Opération Barbarossa (URSS). Déc 1941 Pearl Harbor (EUA). 1942-45 : retournement → victoire Alliés. Débarquements Normandie/Provence."},
-{q:"Qu'est-ce que la guerre d'anéantissement ?",a:"Toutes les ressources mobilisées (économie de guerre). Idéologie : NAZI (hiérarchie des races) vs Alliés (croisade contre fascisme). Inventions : fusées V2, Bazooka, Bombe nucléaire."},
-{q:"Qu'est-ce que la conférence de Wannsee et la Solution Finale ?",a:"Jan. 1942 : nazis planifient l'extermination systématique des Juifs. Bilan : 6 millions de Juifs et 220 000 Tziganes tués. Utilisation du Zyklon B dans les camps."},
-{q:"Qu'est-ce que la 'Drôle de guerre' (1939-1940) ?",a:"Sept. 1939 – mai 1940 : la France est en guerre mais sans vrais combats (8 mois). Puis mai 1940 : offensive éclair → France capitule juin 1940."},
-{q:"Quelle est la situation de la France sous l'Occupation ?",a:"Entre collaboration (régime de Vichy, Pétain : 'bouclier') et résistance (De Gaulle depuis Londres, CNR fondé mai 1943 par Jean Moulin, mort sous la torture)."},
-{q:"Quel est le rôle de Pearl Harbor (déc. 1941) ?",a:"Le Japon attaque la base américaine de Pearl Harbor. Les EUA entrent en guerre → conflit devient vraiment mondial. Tournant majeur : puissance américaine bascule du côté des Alliés."},
-{q:"Quels sont les deux camps en présence ?",a:"Axe : Allemagne, Italie, Japon. Alliés : Royaume-Uni, URSS (après juin 1941), États-Unis (après déc. 1941). 1939-41 victoires de l'Axe, 1942-45 victoire des Alliés."},
-],
-quiz:[
-{q:"Qu'est-ce que l'Opération Barbarossa (juin 1941) ?",choices:["Le débarquement en Normandie","L'attaque allemande contre l'URSS","L'invasion japonaise de la Chine","L'offensive italienne en Afrique"],correct:1,expl:"L'Opération Barbarossa (22 juin 1941) est l'invasion surprise de l'URSS par l'Allemagne nazie, brisant le pacte germano-soviétique de 1939."},
-{q:"Quelle conférence planifie en 1942 l'extermination des Juifs d'Europe ?",choices:["Conférence de Yalta","Conférence de Téhéran","Conférence de Wannsee","Conférence de Potsdam"],correct:2,expl:"La conférence de Wannsee (20 jan. 1942) réunit des hauts responsables nazis qui planifient la 'solution finale' — l'extermination de 6 millions de Juifs."},
-{q:"Qui fonde le Conseil National de la Résistance (CNR) en 1943 ?",choices:["Philippe Pétain","Charles de Gaulle","Jean Moulin","Georges Bidault"],correct:2,expl:"Jean Moulin, délégué de De Gaulle en France occupée, unifie les mouvements de Résistance au sein du CNR en mai 1943. Il est ensuite arrêté et mort sous la torture."},
-{q:"Quand le Japon attaque-t-il Pearl Harbor ?",choices:["Sept. 1939","Juin 1941","Déc. 1941","Août 1942"],correct:2,expl:"L'attaque de Pearl Harbor (7 décembre 1941) fait entrer les EUA dans la guerre, transformant le conflit en guerre véritablement mondiale."},
-]},
-{id:"c4",name:"Fin WWII & Ordre mondial 1945",emoji:"🌍",
-flashcards:[
-{q:"Quel est le bilan humain de la Seconde Guerre mondiale ?",a:"60 millions de morts = 2,5% de la population mondiale. URSS : 25 millions de morts. Plus de la moitié des victimes sont des civils. Découverte des camps en 1945 → traumatisme mondial."},
-{q:"Que décident Yalta et Potsdam en 1945 ?",a:"Yalta (fév. 1945) : Roosevelt-Churchill-Staline organisent l'après-guerre. Potsdam (août 1945) : Allemagne divisée en 4 zones (FR, GB, URSS, EUA), dénazifiée, démilitarisée, décartellisée."},
-{q:"Qu'est-ce que le tribunal de Nuremberg (1945-46) ?",a:"Premier tribunal international : 24 hauts responsables nazis jugés pour crimes contre l'humanité. Pose le droit international pénal."},
-{q:"Comment est créée l'ONU et quelles sont ses bases économiques ?",a:"ONU fondée San Francisco 1945 avec 51 pays fondateurs. Bretton Woods (1944) : dollar étalon-or, création FMI et BIRD. Keynésianisme : l'État peut intervenir en économie."},
-{q:"Quand et comment commence la guerre froide ?",a:"1946 : Churchill dénonce le 'rideau de fer'. 1947 : doctrines Truman (endiguement) et Jdanov (deux camps) + Plan Marshall. Début de la bipolarisation USA-URSS."},
-{q:"Quelle est la nouvelle donne internationale en 1945-48 ?",a:"EUA : puissance n°1 mondiale. URSS : Staline se pose en libérateur, étend influence à l'Est. Chine : guerre civile (nationalistes vs Mao Zedong). Israël naît en mai 1948."},
-{q:"Qu'est-ce que le Plan Marshall ?",a:"Plan d'aide économique américain à l'Europe occidentale (1947-1952). Condition : les bénéficiaires rejoignent le camp occidental. URSS refuse et impose le refus aux pays de l'Est."},
-],
-quiz:[
-{q:"Combien de pays fondent l'ONU à San Francisco en 1945 ?",choices:["20","35","51","70"],correct:2,expl:"L'ONU est fondée à San Francisco en 1945 avec 51 pays fondateurs. Elle vise à remplacer la défunte SDN et maintenir la paix mondiale."},
-{q:"Que prévoit la conférence de Potsdam (août 1945) pour l'Allemagne ?",choices:["Sa réunification immédiate","Sa division en 4 zones d'occupation et sa dénazification","Son annexion par la France","Son transfert sous mandat ONU"],correct:1,expl:"À Potsdam, les Alliés décident de diviser l'Allemagne (et Berlin) en 4 zones (FR, GB, URSS, EUA) et d'organiser sa dénazification."},
-{q:"Qu'est-ce que la doctrine Truman (1947) ?",choices:["Un plan d'aide économique à l'Europe","La politique américaine d'endiguement du communisme","L'entrée des EUA dans l'OTAN","La création du dollar comme monnaie de réserve"],correct:1,expl:"La doctrine Truman (mars 1947) engage les EUA à soutenir tout peuple résistant à la soumission par des pressions extérieures — politique d'endiguement du communisme."},
-{q:"Quand Israël naît-il en tant qu'État ?",choices:["Mars 1947","Mai 1948","Juil. 1949","Jan. 1950"],correct:1,expl:"L'État d'Israël est proclamé le 14 mai 1948, reconnu aussitôt par EUA et URSS, déclenchant immédiatement la première guerre israélo-arabe."},
-]},
-{id:"c5",name:"France : nouvelle place 1945-74",emoji:"🇫🇷",
-flashcards:[
-{q:"Pourquoi la IVème République est-elle instable ?",a:"Gouvernements durent en moyenne 6 mois (24 en 12 ans). Divisions sur guerre froide, décolonisation, construction européenne. La crise algérienne emporte le régime en 1958."},
-{q:"Quelles sont les bases de la politique de la IVème République ?",a:"Atlantisme : Plan Marshall 1948, OECE 1948, OTAN 1949. Construction européenne : CECA 1951, traité de Rome/CEE 1957. Décolonisation Maroc-Tunisie 1956. Guerre Algérie nov. 1954."},
-{q:"Comment naît la Vème République en 1958 ?",a:"Crise algérienne (putsch du 13 mai 1958) → De Gaulle appelé. Pleins pouvoirs + nouvelle constitution adoptée par référendum sept. 1958 avec 79% de oui."},
-{q:"Quelles sont les innovations de la Vème République ?",a:"Président : chef des armées, nomme PM, droit de grâce, dissout l'AN. Conseil Constitutionnel : 9 juges pour 9 ans. 1962 : élection du président au suffrage universel direct (62% oui)."},
-{q:"Quelle est la politique coloniale de De Gaulle ?",a:"Indépendance des colonies d'Afrique subsaharienne 1960 (autodétermination). Algérie : autodétermination annoncée 1959 → accords d'Évian 1962 → indépendance algérienne."},
-{q:"Qu'est-ce que Mai 68 ?",a:"Mouvement étudiant → salariés et ouvriers. Contre blocage de la société et excès d'autoritarisme. 1969 : référendum région + réforme Sénat perdu → De Gaulle démissionne."},
-{q:"Comment la France se modernise-t-elle sous De Gaulle ?",a:"1960 : autoroutes, nouveaux transports. Arme atomique 1960-68. PCF principal opposant. De Gaulle élu en 1958 avec 78,5% des voix du collège électoral."},
-],
-quiz:[
-{q:"Quel traité européen la France signe-t-elle en 1957 ?",choices:["Le traité de l'OTAN","Le traité de Rome (CEE)","Les accords de Schengen","Le traité de Maastricht"],correct:1,expl:"Le traité de Rome (25 mars 1957) crée la CEE entre 6 pays dont la France — ancêtre de l'Union Européenne."},
-{q:"Avec quel pourcentage la Constitution 1958 est-elle adoptée ?",choices:["55%","66%","79%","91%"],correct:2,expl:"La Constitution de la Vème République est adoptée par référendum le 28 sept. 1958 avec 79% de oui, fort soutien au retour de De Gaulle."},
-{q:"Quand les accords d'Évian mettent-ils fin à la guerre d'Algérie ?",choices:["1958","1960","1962","1965"],correct:2,expl:"Les accords d'Évian sont signés le 18 mars 1962, reconnaissant l'indépendance de l'Algérie après 8 ans de guerre (nov. 1954 – mars 1962)."},
-{q:"Pourquoi De Gaulle démissionne-t-il en 1969 ?",choices:["Il est renversé par un vote","Il perd un référendum sur la régionalisation et le Sénat","Il est mis en examen","Il perd la présidentielle"],correct:1,expl:"En 1969, De Gaulle engage sa responsabilité dans un référendum sur la régionalisation et la réforme du Sénat. Le Non l'emporte → il démissionne."},
-]},
-{id:"c6",name:"Bipolarisation & Tiers-Monde",emoji:"🌐",
-flashcards:[
-{q:"Quels sont les deux blocs et leurs organisations ?",a:"Ouest : OECE 1948, OTAN 1949. Est : Conseil d'aide économique mutuel 1949, Pacte de Varsovie 1955. Guerre par propagande et renseignement (CIA, NSA, KGB)."},
-{q:"Quelles sont les premières crises de la guerre froide ?",a:"1948 : RFA ≠ RDA. 1948-49 : Blocus Berlin Ouest 11 mois / pont aérien. 1950 : Guerre de Corée (38e parallèle). 12-13 août 1961 : Mur de Berlin. 1962 : Crise de Cuba."},
-{q:"Qu'est-ce que la détente des années 1950-70 ?",a:"Mort de Staline 1953. 1956 : Crise de Suez (accord EUA+URSS). 1972 : accords SALT I (réduction armements). RFA + RDA réconciliées. Limite : Guerre du Vietnam (1964, 10 ans)."},
-{q:"Quels facteurs favorisent la décolonisation après 1945 ?",a:"Pays européens affaiblis par la WWII. Sentiments nationalistes en hausse. EUA et URSS favorisent la décolonisation (pour gagner des alliés). Philosophes engagés : Sartre, Camus, Église."},
-{q:"Quelles sont les deux modalités de décolonisation ?",a:"Négociation : Inde (1947 du RU), Maroc et Tunisie (1956 de FR). Violence : Guerre d'Algérie 1954-1962 → 250 000 morts, torture."},
-{q:"Comment le Tiers-Monde s'affirme-t-il ?",a:"1955 : Conférence de Bandoeng (29 pays afro-asiatiques). Mouvement des non-alignés. 1960 : création de l'OPEP → pétrole comme arme économique."},
-{q:"Qu'est-ce que la crise de Cuba (1962) ?",a:"URSS installe des missiles à Cuba (90 km des EUA). 13 jours de crise nucléaire. Kennedy impose un blocus naval. Khrouchtchev recule → retire les missiles. Pic de la guerre froide."},
-],
-quiz:[
-{q:"Quand est construit le Mur de Berlin ?",choices:["13 août 1955","13 août 1961","9 nov. 1989","3 oct. 1990"],correct:1,expl:"Le Mur de Berlin est érigé dans la nuit du 12 au 13 août 1961 par la RDA pour stopper l'hémorragie de population vers l'Ouest (3 millions depuis 1945)."},
-{q:"Qu'est-ce que la conférence de Bandoeng (1955) ?",choices:["Une conférence de l'OTAN","La réunion de 29 pays afro-asiatiques affirmant le non-alignement","La création de l'OPEP","Un accord de désarmement nucléaire"],correct:1,expl:"Bandoeng (1955) réunit 29 États d'Asie et d'Afrique qui affirment leur neutralité dans la guerre froide et leur solidarité anticolonialiste."},
-{q:"Quand est créée l'OPEP ?",choices:["1945","1955","1960","1973"],correct:2,expl:"L'OPEP est créée en 1960. Elle utilise le pétrole comme arme économique, notamment lors du choc pétrolier de 1973."},
-{q:"Que sont les accords SALT I (1972) ?",choices:["La création du Pacte de Varsovie","Des accords de limitation des armements stratégiques EUA-URSS","Le traité franco-soviétique","La reconnaissance diplomatique de la Chine"],correct:1,expl:"SALT I (1972) : accords de limitation des armements stratégiques entre Nixon et Brejnev, symbole de la détente."},
-]},
-{id:"c7",name:"Équilibres mondiaux 1970-1991",emoji:"🛢️",
-flashcards:[
-{q:"Qu'est-ce que le choc pétrolier de 1973 ?",a:"Attaque contre Israël → l'OPEP utilise le pétrole comme arme économique. Inflation, chômage, endettement dans les années 70. Plans keynésiens de relance échouent."},
-{q:"Qu'est-ce que le deuxième choc pétrolier (1979) ?",a:"Révolution islamique en Iran → nouveau choc. Nixon avait suspendu la convertibilité dollar/or en 1971 (fin Bretton Woods). Accords de Kingston 1976 → change flottant."},
-{q:"Quelles sont les politiques de rigueur des années 1980 ?",a:"Thatcher (RU, 1979-1990) et Reagan (EUA, 1981-1989) : politiques libérales. Mitterrand (FR, 1981-83) : relance keynésienne → échec → virage libéral 1983."},
-{q:"Quelles sont les causes de la fin de la guerre froide ?",a:"1979 : invasion Afghanistan par URSS + Affaire Watergate 1974 + Révolution islamique 1979 → retour tensions. 1985 : Gorbatchev (perestroïka + glasnost). URSS fragilisée."},
-{q:"Comment tombe le bloc soviétique ?",a:"1989 : Chute du Mur de Berlin. 1990 : Allemagne réunifiée. Tous les régimes communistes d'Europe tombent. Perestroïka = échec. 1991 : Gorbatchev dissout l'URSS."},
-{q:"Comment la Chine s'ouvre-t-elle dans les années 1978-79 ?",a:"1978 : Deng Xiaoping lance la politique des 'quatre modernisations'. 1979 : Zones Économiques Spéciales → ouverture économique tout en maintenant le régime communiste."},
-{q:"Comment l'Europe du Sud se démocratise-t-elle dans les années 1970 ?",a:"Grèce : dictature des colonels 1967-74 → Karamanlis. Portugal : Révolution des Œillets 1974 (sans effusion de sang, contre Salazar). Espagne : mort Franco 1975 → Juan Carlos → Suarez."},
-],
-quiz:[
-{q:"Qui arrive au pouvoir en URSS en 1985 et avec quel programme ?",choices:["Brejnev avec la doctrine Brejnev","Andropov avec la Glasnost","Gorbatchev avec perestroïka et glasnost","Eltsine avec la thérapie de choc"],correct:2,expl:"Gorbatchev (1985) lance la 'perestroïka' (restructuration économique) et la 'glasnost' (transparence). Ces réformes fragilisent et finissent par dissoudre l'URSS."},
-{q:"Quand le Mur de Berlin tombe-t-il ?",choices:["3 oct. 1989","9 nov. 1989","25 déc. 1989","1er jan. 1990"],correct:1,expl:"Le Mur de Berlin tombe le 9 novembre 1989, symbole de la fin de la guerre froide. L'Allemagne est officiellement réunifiée le 3 octobre 1990."},
-{q:"Que décide Nixon en 1971 concernant le dollar ?",choices:["Il dévalue le dollar de 50%","Il suspend la convertibilité dollar/or, fin de Bretton Woods","Il crée le dollar numérique","Il indexe le dollar sur le pétrole"],correct:1,expl:"En 1971, Nixon suspend la convertibilité du dollar en or, mettant fin au système de Bretton Woods (1944). En 1976, les accords de Kingston officialisent le change flottant."},
-{q:"Qu'est-ce que la Révolution des Œillets (1974) ?",choices:["La révolution iranienne","La révolution sandiniste","Le renversement de la dictature de Salazar au Portugal","La chute de Franco en Espagne"],correct:2,expl:"La Révolution des Œillets (25 avril 1974) est un coup d'État militaire au Portugal qui renverse la dictature de Salazar sans effusion de sang."},
-]},
-{id:"c8",name:"France 1974-1988",emoji:"🌹",
-flashcards:[
-{q:"Comment Giscard d'Estaing arrive-t-il au pouvoir en 1974 ?",a:"Mort de Pompidou 1974 → élection serrée : VGE bat Mitterrand de 400 000 voix. PM : Chirac (gaulliste, 1974-76) puis Barre (centriste, 1976-81). Crise éco s'installe."},
-{q:"Comment Mitterrand gagne-t-il en 1981 et quelle politique mène-t-il ?",a:"Mai 1981 : victoire Mitterrand ('La force tranquille'). Nationalisations, ISF, relance keynésienne. Échec → 1983 : virage libéral. 1986 : cohabitation → Chirac PM."},
-{q:"Quelles sont les avancées pour les femmes entre 1974 et 1988 ?",a:"1944 : droit de vote. 1975 : loi IVG (Simone Veil). Loi égalité salariale, autorité parentale conjointe, divorce par consentement mutuel."},
-{q:"Qu'est-ce que la première cohabitation (1986) ?",a:"Les législatives 1986 donnent la majorité à la droite. Mitterrand accepte Chirac comme PM. Cohabitation : président gauche + PM droite. Première fois sous la Vème République."},
-{q:"Quelles réformes sociétales marque la période 1974-1988 ?",a:"1974 : majorité civile de 21 à 18 ans. 1959 : obligation scolaire 14 à 16 ans. 1982 : dépénalisation homosexualité. 1984 : SOS Racisme. Immigration diversifiée (Afrique sub., Asie)."},
-{q:"Comment évolue la culture et la télévision sous Mitterrand ?",a:"Mitterrand : Axe Majeur (Fête de la musique, journées du patrimoine). Télé : 9-10 foyers sur 10 la possèdent dans les années 70. 1984 : Canal+. 1987 : privatisation TF1."},
-{q:"Qu'est-ce que la politique de rigueur en France après 1983 ?",a:"Après l'échec de la relance keynésienne 1981-83, Mitterrand adopte des mesures libérales en 1983 : rigueur budgétaire, blocage des prix et salaires. 'Tournant de la rigueur'."},
-],
-quiz:[
-{q:"Quelle loi Simone Veil fait-elle adopter en 1975 ?",choices:["La loi sur la parité en politique","La loi sur l'IVG","La loi sur le divorce par consentement","La loi sur la contraception"],correct:1,expl:"Simone Veil, ministre de la Santé de VGE, fait adopter en 1975 la loi légalisant l'IVG en France, au prix d'un débat parlementaire très difficile."},
-{q:"En quelle année la majorité civile passe-t-elle de 21 à 18 ans ?",choices:["1968","1972","1974","1981"],correct:2,expl:"Valéry Giscard d'Estaing abaisse la majorité civile de 21 à 18 ans en 1974."},
-{q:"Quelle chaîne est créée en 1984 ?",choices:["France 5","Arte","Canal+","M6"],correct:2,expl:"Canal+ est créée en 1984, première chaîne privée payante française. En 1987, TF1 est privatisée sous Chirac premier ministre."},
-{q:"Quelle est la politique économique de Mitterrand à partir de 1981 ?",choices:["Rigueur budgétaire immédiate","Relance keynésienne : nationalisations et ISF","Privatisation massive","Réduction des impôts"],correct:1,expl:"Mitterrand tente une relance keynésienne (nationalisations, ISF, hausse SMIC). C'est un échec → virage libéral en 1983 ('tournant de la rigueur')."},
-]},
-{id:"c9",name:"Désordre mondial depuis 1991",emoji:"💥",
-flashcards:[
-{q:"Quelle est la place des États-Unis après 1991 ?",a:"Seule hyperpuissance : 1er PIB mondial, FTN (GAFAM), puissance militaire et culturelle (soft power). 1991 : 'Tempête du désert' → gendarme du monde. 1993 : traité START."},
-{q:"Quelles sont les nouvelles puissances et acteurs ?",a:"BRICS : Chine (2ème économie), Inde (4ème). Arabie Saoudite, Qatar, EAU. FTN, ONG, lobbies, mafias → acteurs de la mondialisation remettent en cause l'hégémonie américaine."},
-{q:"Quelles sont les nouvelles formes de terrorisme ?",a:"Islamisme radical : Hezbollah 1982, Hamas et Al Qaïda 1987 (1ère Intifada), Boko Haram 2002 (Nigeria), Daesh. Attentats 11 sept. 2001, guerre Afghanistan, Irak 2003."},
-{q:"Quels sont les grands génocides et crimes de masse depuis 1990 ?",a:"1994 : génocide Tutsis au Rwanda (800 000 morts). 1995 : massacre de Srebrenica (8 000 morts). Depuis 2001 : guerre en Syrie (500 000 morts). Guerres asymétriques."},
-{q:"Pourquoi la gouvernance mondiale est-elle en difficulté ?",a:"ONU paralysée (droit de veto, incapable de se réformer). Institutions : FMI, OMC (économique), G7, G20 (mondiale), CPI. Les grandes puissances contournent l'ONU."},
-{q:"Quelles armes nouvelles changent la nature des conflits ?",a:"Armes de plus en plus destructrices : nucléaires, chimiques, hypersoniques. Guerre informatique (cyberattaques). États faillis. Guerres asymétriques difficiles à gagner (Vietnam, Irak, Afghanistan)."},
-{q:"Qu'est-ce que l'opération 'Tempête du désert' (1991) ?",a:"Coalition internationale menée par les EUA pour libérer le Koweït envahi par l'Irak de Saddam Hussein. Les EUA s'affirment comme 'gendarme du monde' au lendemain de la guerre froide."},
-],
-quiz:[
-{q:"Quel est le bilan du génocide des Tutsis au Rwanda (1994) ?",choices:["200 000 morts","500 000 morts","800 000 morts","1,5 million de morts"],correct:2,expl:"Le génocide des Tutsis (avril-juillet 1994) fait environ 800 000 victimes en 100 jours. La communauté internationale n'intervient pas, honte mémorielle majeure."},
-{q:"Qu'est-ce que le traité START (1993) ?",choices:["Un accord de libre-échange","Un traité de réduction des armements stratégiques","La création de l'OTAN post-guerre froide","Un accord de non-prolifération nucléaire"],correct:1,expl:"START (1993) : traité de réduction des armements stratégiques entre EUA et Russie, symbole d'une tentative de désarmement après la guerre froide."},
-{q:"Quel pays est la 2ème économie mondiale ?",choices:["L'Inde","Le Japon","L'Allemagne","La Chine"],correct:3,expl:"La Chine est la 2ème économie mondiale, l'Inde la 4ème. Avec Brésil, Russie, Afrique du Sud, ils forment les BRICS, qui défient l'hégémonie occidentale."},
-{q:"Qu'est-ce que le massacre de Srebrenica (1995) ?",choices:["Un génocide au Rwanda","Le meurtre de 8 000 Bosniaques musulmans par les Serbes de Bosnie","Une attaque terroriste en Europe","Un crime de guerre en Irak"],correct:1,expl:"En juillet 1995, les forces serbes de Bosnie massacrent environ 8 000 hommes et garçons bosniaques musulmans à Srebrenica. Reconnu comme génocide par le TPIY."},
-]},
-{id:"c10",name:"Construction européenne depuis 1991",emoji:"🇪🇺",
-flashcards:[
-{q:"Qu'est-ce que le traité de Maastricht (1992) ?",a:"Crée l'Union Européenne à 12 membres. Pose les bases de l'Union économique et monétaire (futur euro). Renforce le Parlement européen."},
-{q:"Quels sont les grands traités de l'UE après Maastricht ?",a:"Amsterdam (1997) + Nice (2001) : + de pouvoir au Parlement. Lisbonne (2007) : personnalité juridique de l'UE + président permanent."},
-{q:"Comment l'UE s'élargit-elle depuis 1991 ?",a:"1995 : Autriche, Suède, Finlande. 2004 : 10 États (Europe centrale-orientale). 2007 : Bulgarie et Roumanie. 2013 : Croatie. Critères : valeurs démocratiques + économie de marché."},
-{q:"Qu'est-ce que l'Euro ?",a:"Créé en 1999 (transactions financières), circule physiquement dès 2002. 2ème monnaie de réserve mondiale. Remplace les monnaies nationales dans la zone euro."},
-{q:"Quelle est la puissance économique de l'UE ?",a:"450 millions d'habitants (3ème rang mondial). 2ème économie mondiale. 1ère puissance commerciale (20% volume mondial). 1er destinataire d'investissements internationaux."},
-{q:"Quelles crises fragilisent l'UE ?",a:"2005 : FR et Pays-Bas refusent la constitution européenne. Crise des subprimes (Grèce). Brexit 2020. Montée eurosceptiques : Orbán en Hongrie 2010, extrême droite aux européennes 2024."},
-{q:"Qu'est-ce que les accords de Schengen (1985) ?",a:"Libre circulation des personnes dans l'espace européen sans contrôles aux frontières intérieures. Signé en 1985, appliqué à partir de 1995. Espace de 27 pays aujourd'hui."},
-],
-quiz:[
-{q:"Quel traité crée officiellement l'Union Européenne ?",choices:["Traité de Rome (1957)","Traité de Maastricht (1992)","Traité d'Amsterdam (1997)","Traité de Lisbonne (2007)"],correct:1,expl:"Le traité de Maastricht (1992) crée officiellement l'Union Européenne, pose les bases de l'euro et renforce le Parlement européen."},
-{q:"Depuis quelle année l'euro circule-t-il physiquement ?",choices:["1999","2000","2002","2004"],correct:2,expl:"L'euro est créé en 1999 (transactions financières) mais circule physiquement à partir du 1er janvier 2002."},
-{q:"Quand le Brexit est-il effectif ?",choices:["2016","2018","2019","2020"],correct:3,expl:"Le Brexit est effectif en janvier 2020. Le référendum avait eu lieu en juin 2016 (52% pour la sortie). Le RU est le premier pays à quitter l'UE."},
-{q:"Combien de nouveaux États rejoignent l'UE en 2004 ?",choices:["5","8","10","15"],correct:2,expl:"En 2004, 10 nouveaux États (principalement d'Europe centrale-orientale) rejoignent l'UE : le plus grand élargissement de son histoire."},
-]},
-{id:"c11",name:"République française depuis 1990",emoji:"⚖️",
-flashcards:[
-{q:"Qu'est-ce que la décentralisation de 1982 ?",a:"1ère loi de décentralisation : collectivités territoriales prennent en charge écoles, autoroutes, distribution des aides. Pouvoir des préfets réduit pour rapprocher décision et population."},
-{q:"Quelles sont les grandes étapes de la décentralisation ?",a:"1982 : 1ère loi. 2003 : 2ème vague (autonomie financière, nouvelles responsabilités). 2015 : loi NOTRe → régions passent de 22 à 13."},
-{q:"Quelles réformes institutionnelles marquent la Vème République récente ?",a:"2000 : mandat présidentiel de 7 à 5 ans (quinquennat, pour éviter cohabitation). 2008 : réforme constitutionnelle (limiter pouvoir du président). Référendum d'initiative partagée depuis 2008."},
-{q:"Quelles lois défendent la laïcité depuis 2000 ?",a:"2004 : loi interdisant signes religieux ostentatoires à l'école et le prosélytisme. 2010 : interdiction du port du Burqa en espace public."},
-{q:"Quelles avancées pour les droits des femmes depuis 2000 ?",a:"2000 : loi sur la parité en politique (listes électorales). Lois luttant contre les violences faites aux femmes. Dans le prolongement des lois IVG 1975 et égalité salariale."},
-{q:"Quelles sont les avancées pour les droits LGBT+ en France ?",a:"1982 : dépénalisation de l'homosexualité (Mitterrand). 1999 : PACS (Pacte Civil de Solidarité). 2013 : loi 'mariage pour tous' (Hollande)."},
-{q:"Pourquoi le référendum est-il une arme à double tranchant ?",a:"Autorisé depuis 1958, peut délégitimer le président si le Non l'emporte : 1969 (De Gaulle démissionne), 2005 (Chirac perd le référendum sur la constitution européenne)."},
-],
-quiz:[
-{q:"En quelle année le PACS est-il créé en France ?",choices:["1995","1999","2004","2007"],correct:1,expl:"Le Pacte Civil de Solidarité (PACS) est créé en 1999. Il offre un cadre légal aux couples non mariés, notamment aux couples de même sexe."},
-{q:"En quelle année le mandat présidentiel passe-t-il de 7 à 5 ans ?",choices:["1995","2000","2002","2008"],correct:1,expl:"En 2000, sous Chirac, le quinquennat est adopté par référendum. Objectif : réduire le risque de cohabitation et renforcer la cohérence de l'action présidentielle."},
-{q:"Combien de régions la loi NOTRe (2015) crée-t-elle ?",choices:["18","15","13","10"],correct:2,expl:"La loi NOTRe (2015) réduit le nombre de régions métropolitaines de 22 à 13, en fusionnant plusieurs régions pour créer des entités plus puissantes."},
-{q:"Quelle loi de 2013 marque une avancée pour les droits LGBT+ ?",choices:["La loi sur la parité","La loi sur le PACS","La loi 'mariage pour tous'","La loi Hadopi"],correct:2,expl:"La loi 'mariage pour tous' est adoptée en mai 2013 sous le président Hollande, ouvrant le mariage et l'adoption aux couples de même sexe."},
-]},
-]};
+<body class="bg-slate-900 text-white">
 
-const state={
-  mastered:JSON.parse(localStorage.getItem('iep_m')||'{}'),
-  scores:JSON.parse(localStorage.getItem('iep_s')||'{}'),
-  flashCards:[],flashIdx:0,flashCat:null,isFlipped:false,fcRes:{r:0,h:0,w:0},
-  quizQs:[],quizIdx:0,quizScore:0,quizCat:null,
-  blitzQs:[],blitzIdx:0,blitzScore:0,blitzStreak:0,blitzCat:null
-};
-function save(){localStorage.setItem('iep_m',JSON.stringify(state.mastered));localStorage.setItem('iep_s',JSON.stringify(state.scores));}
-function init(){
-  const total=DATA.categories.reduce((s,c)=>s+c.flashcards.length,0);
-  const mastered=Object.values(state.mastered).filter(v=>v>=2).length;
-  document.getElementById('stat-total').textContent=total;
-  document.getElementById('stat-mastered').textContent=mastered;
-  const scores=Object.values(state.scores);
-  if(scores.length)document.getElementById('stat-score').textContent=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length)+'%';
-  ['flash','quiz','blitz'].forEach(mode=>{
-    const el=document.getElementById(mode+'-cat-list');el.innerHTML='';
-    const all=document.createElement('div');all.className='cat-all';
-    const n=DATA.categories.reduce((s,c)=>s+(mode==='flash'?c.flashcards.length:c.quiz.length),0);
-    all.textContent='⚡ Tout mélanger — '+n+' questions';
-    all.onclick=()=>startMode(mode,null);el.appendChild(all);
-    DATA.categories.forEach(cat=>{
-      const d=document.createElement('div');d.className='cat-item';
-      const cnt=mode==='flash'?cat.flashcards.length:cat.quiz.length;
-      d.innerHTML=`<span class="cat-name">${cat.emoji} Ch.${cat.id.slice(1)} — ${cat.name}</span><span class="cat-count">${cnt}</span>`;
-      d.onclick=()=>startMode(mode,cat.id);el.appendChild(d);
-    });
-  });
-}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function goMode(mode){showScreen(mode+'-cats');}
-function startMode(mode,catId){if(mode==='flash')startFlash(catId);else if(mode==='quiz')startQuiz(catId);else startBlitz(catId);}
-function startFlash(catId){
-  let cards=[];
-  if(catId){const c=DATA.categories.find(x=>x.id===catId);cards=[...c.flashcards];document.getElementById('flash-title').textContent=c.emoji+' '+c.name;state.flashCat=catId;}
-  else{DATA.categories.forEach(c=>c.flashcards.forEach(f=>cards.push({...f})));document.getElementById('flash-title').textContent='Tout mélanger';state.flashCat=null;}
-  state.flashCards=shuffle(cards);state.flashIdx=0;state.isFlipped=false;state.fcRes={r:0,h:0,w:0};
-  showScreen('flashcards');renderFlash();
-}
-function renderFlash(){
-  const card=state.flashCards[state.flashIdx];
-  document.getElementById('card-q').textContent=card.q;
-  document.getElementById('card-a').textContent=card.a;
-  document.getElementById('flash-prog').textContent=(state.flashIdx+1)+'/'+state.flashCards.length;
-  document.getElementById('flash-bar').style.width=(state.flashIdx/state.flashCards.length*100)+'%';
-  document.getElementById('flip-card').classList.remove('flipped');state.isFlipped=false;
-}
-function flipCard(){document.getElementById('flip-card').classList.toggle('flipped');state.isFlipped=!state.isFlipped;}
-function rateCard(score){
-  if(!state.isFlipped){flipCard();return;}
-  const card=state.flashCards[state.flashIdx];
-  const key=card.q.slice(0,40);
-  state.mastered[key]=(state.mastered[key]||0)+(score===2?1:score===0?-1:0);
-  if(score===2){state.fcRes.r++;flashFx();}else if(score===1)state.fcRes.h++;else state.fcRes.w++;
-  save();state.flashIdx++;
-  if(state.flashIdx>=state.flashCards.length)showResults('flash',state.fcRes.r,state.flashCards.length);
-  else renderFlash();
-}
-function startQuiz(catId){
-  let qs=[];
-  if(catId){const c=DATA.categories.find(x=>x.id===catId);qs=[...c.quiz];state.quizCat=catId;}
-  else{DATA.categories.forEach(c=>qs.push(...c.quiz));state.quizCat=null;}
-  state.quizQs=shuffle(qs);state.quizIdx=0;state.quizScore=0;showScreen('quiz');renderQuiz();
-}
-function renderQuiz(){
-  const q=state.quizQs[state.quizIdx];
-  document.getElementById('q-num').textContent='QUESTION '+String(state.quizIdx+1).padStart(2,'0');
-  document.getElementById('q-text').textContent=q.q;
-  document.getElementById('quiz-prog').textContent=(state.quizIdx+1)+'/'+state.quizQs.length;
-  document.getElementById('quiz-bar').style.width=(state.quizIdx/state.quizQs.length*100)+'%';
-  document.getElementById('explanation').className='explanation-box';
-  document.getElementById('next-quiz-btn').className='next-quiz-btn';
-  const letters=['A','B','C','D'];
-  const el=document.getElementById('choices');el.innerHTML='';
-  q.choices.forEach((ch,i)=>{
-    const btn=document.createElement('button');btn.className='choice';
-    btn.innerHTML=`<span class="choice-letter">${letters[i]}.</span>${ch}`;
-    btn.onclick=()=>answerQuiz(i,q);el.appendChild(btn);
-  });
-}
-function answerQuiz(idx,q){
-  const choices=document.querySelectorAll('.choice');
-  choices.forEach(c=>c.classList.add('disabled'));
-  choices[q.correct].classList.add('correct');
-  if(idx!==q.correct)choices[idx].classList.add('wrong');
-  else{state.quizScore++;flashFx();}
-  const expl=document.getElementById('explanation');
-  expl.textContent='💡 '+q.expl;expl.className='explanation-box show';
-  document.getElementById('next-quiz-btn').className='next-quiz-btn show';
-}
-function nextQuiz(){
-  state.quizIdx++;
-  if(state.quizIdx>=state.quizQs.length){
-    const pct=Math.round(state.quizScore/state.quizQs.length*100);
-    if(state.quizCat)state.scores[state.quizCat]=pct;save();
-    showResults('quiz',state.quizScore,state.quizQs.length);
-  }else renderQuiz();
-}
-const BT=15;let blitzExp=null,blitzRAF=null;
-function startBlitz(catId){
-  let qs=[];
-  if(catId){const c=DATA.categories.find(x=>x.id===catId);qs=[...c.quiz];state.blitzCat=catId;}
-  else{DATA.categories.forEach(c=>qs.push(...c.quiz));state.blitzCat=null;}
-  state.blitzQs=shuffle(qs);state.blitzIdx=0;state.blitzScore=0;state.blitzStreak=0;showScreen('blitz');renderBlitz();
-}
-function renderBlitz(){
-  const q=state.blitzQs[state.blitzIdx];
-  document.getElementById('blitz-q').textContent=q.q;
-  document.getElementById('blitz-prog').textContent=(state.blitzIdx+1)+'/'+state.blitzQs.length;
-  document.getElementById('blitz-bar').style.width=(state.blitzIdx/state.blitzQs.length*100)+'%';
-  document.getElementById('blitz-score-display').textContent=state.blitzScore+' pts';
-  document.getElementById('blitz-streak').textContent=state.blitzStreak>=2?'🔥 x'+state.blitzStreak:'';
-  const el=document.getElementById('blitz-choices');el.innerHTML='';
-  q.choices.forEach((ch,idx)=>{
-    const btn=document.createElement('button');btn.className='blitz-choice';btn.textContent=ch;
-    btn.onclick=()=>answerBlitz(idx,q);el.appendChild(btn);
-  });
-  startBTimer(q);
-}
-function startBTimer(q){
-  cancelAnimationFrame(blitzRAF);
-  const circ=201.1;blitzExp=Date.now()+BT*1000;
-  const ring=document.getElementById('ring-fill'),num=document.getElementById('ring-num');
-  function tick(){
-    const rem=Math.max(0,blitzExp-Date.now());
-    const s=Math.ceil(rem/1000),fr=rem/(BT*1000);
-    ring.style.strokeDashoffset=circ*(1-fr);
-    const col=fr>.4?'var(--gold)':fr>.2?'#e08020':'var(--red)';
-    ring.style.stroke=col;num.textContent=s;num.style.color=col;
-    if(rem<=0){timeoutBlitz(q);return;}
-    blitzRAF=requestAnimationFrame(tick);
-  }
-  blitzRAF=requestAnimationFrame(tick);
-}
-function timeoutBlitz(q){
-  cancelAnimationFrame(blitzRAF);state.blitzStreak=0;
-  document.querySelectorAll('.blitz-choice').forEach((b,i)=>{b.classList.add('disabled');if(i===q.correct)b.classList.add('reveal');});
-  setTimeout(nextBlitz,1100);
-}
-function answerBlitz(idx,q){
-  cancelAnimationFrame(blitzRAF);
-  document.querySelectorAll('.blitz-choice').forEach(b=>b.classList.add('disabled'));
-  const rem=Math.max(0,blitzExp-Date.now());
-  if(idx===q.correct){
-    state.blitzStreak++;
-    state.blitzScore+=10+Math.round(rem/1000)+(state.blitzStreak>1?(state.blitzStreak-1)*5:0);
-    document.querySelectorAll('.blitz-choice')[idx].classList.add('correct');flashFx();
-  }else{
-    state.blitzStreak=0;
-    document.querySelectorAll('.blitz-choice')[idx].classList.add('wrong');
-    document.querySelectorAll('.blitz-choice')[q.correct].classList.add('reveal');
-  }
-  document.getElementById('blitz-score-display').textContent=state.blitzScore+' pts';
-  document.getElementById('blitz-streak').textContent=state.blitzStreak>=2?'🔥 x'+state.blitzStreak:'';
-  setTimeout(nextBlitz,800);
-}
-function nextBlitz(){
-  state.blitzIdx++;
-  if(state.blitzIdx>=state.blitzQs.length)showResults('blitz',state.blitzScore,state.blitzQs.length*10);
-  else renderBlitz();
-}
-function stopBlitz(){cancelAnimationFrame(blitzRAF);showScreen('blitz-cats');}
-function showResults(mode,score,total){
-  init();
-  const pct=total>0?Math.round(score/total*100):0;
-  let icon,msg;
-  if(mode==='blitz'){
-    document.getElementById('result-score').textContent=score+' pts';
-    icon=score>120?'🏆':score>60?'⚡':'💪';
-    msg=score>120?'Score brillant, tu vas cartonner !':'Continue — la régularité fait la différence.';
-  }else{
-    document.getElementById('result-score').textContent=score+'/'+total;
-    icon=pct>=80?'🏆':pct>=60?'📚':'💡';
-    msg=pct>=80?'Excellent ! Ce chapitre est maîtrisé.':pct>=60?'Bon niveau, encore quelques révisions.':'Reprends tes notes et relance !';
-  }
-  document.getElementById('result-icon').textContent=icon;
-  document.getElementById('result-mode-label').textContent={flash:'Flashcards terminées',quiz:'Quiz terminé',blitz:'Blitz terminé'}[mode];
-  document.getElementById('result-msg').textContent=msg;
-  document.getElementById('result-retry').onclick=()=>{
-    if(mode==='flash')startFlash(state.flashCat);
-    else if(mode==='quiz')startQuiz(state.quizCat);
-    else startBlitz(state.blitzCat);
-  };
-  showScreen('results');
-}
-function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function flashFx(){const f=document.getElementById('flash');f.classList.add('go');setTimeout(()=>f.classList.remove('go'),120);}
-let tx=0;
-document.getElementById('flip-card').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
-document.getElementById('flip-card').addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-tx;
-  if(Math.abs(dx)>60){if(!state.isFlipped){flipCard();return;}rateCard(dx>0?2:0);}
-},{passive:true});
-init();
+  <!-- Background -->
+  <div class="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.3),_transparent_40%),linear-gradient(180deg,_rgba(15,23,42,1),_rgba(30,41,59,1))]"></div>
 
-</script>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between bg-white/5 border border-white/10 rounded-full px-4 py-3 backdrop-blur">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white text-slate-900 rounded-xl flex items-center justify-center font-black">S</div>
+        <div>
+          <p class="text-sm font-semibold">StudLab</p>
+          <p class="text-xs text-white/50">Révisions bac • HGGSP</p>
+        </div>
+      </div>
+      <span class="hidden md:block text-sm text-sky-300">Bientôt disponible</span>
+    </header>
+
+    <!-- Hero -->
+    <section class="mt-12 grid lg:grid-cols-2 gap-10 items-center">
+
+      <div>
+        <p class="text-sky-300 text-sm mb-4">Une nouvelle façon de réviser</p>
+
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">
+          StudLab, la plateforme de révision simple et efficace.
+        </h1>
+
+        <p class="mt-5 text-white/70">
+          Flashcards, QCM et contenu organisé pour réviser rapidement. Lancement avec HGGSP.
+        </p>
+
+        <!-- Features quick -->
+        <div class="mt-6 grid grid-cols-2 gap-3 text-sm">
+          <div class="bg-white/5 border border-white/10 rounded-xl p-3">✔ Révision rapide</div>
+          <div class="bg-white/5 border border-white/10 rounded-xl p-3">✔ Interface simple</div>
+          <div class="bg-white/5 border border-white/10 rounded-xl p-3">✔ Spécial HGGSP</div>
+          <div class="bg-white/5 border border-white/10 rounded-xl p-3">✔ Mobile first</div>
+        </div>
+
+        <!-- Email -->
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <input type="email" placeholder="Ton email" class="flex-1 px-4 py-3 rounded-xl bg-slate-800 border border-white/10 outline-none">
+          <button class="bg-white text-slate-900 px-5 py-3 rounded-xl font-semibold">Être prévenu</button>
+        </div>
+
+        <!-- Progress -->
+        <div class="mt-8">
+          <div class="flex justify-between text-sm">
+            <span>Progression</span>
+            <span class="text-sky-300">72%</span>
+          </div>
+          <div class="w-full bg-white/10 h-2 rounded-full mt-2">
+            <div class="bg-gradient-to-r from-sky-400 to-blue-500 h-2 rounded-full" style="width:72%"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Mockup mobile -->
+      <div class="bg-white/5 border border-white/10 rounded-3xl p-5 backdrop-blur">
+        <div class="bg-slate-950 rounded-2xl p-4">
+
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white text-slate-900 rounded-xl flex items-center justify-center font-bold">S</div>
+            <div>
+              <p class="font-semibold">StudLab</p>
+              <p class="text-xs text-white/50">Réviser simplement</p>
+            </div>
+          </div>
+
+          <div class="mt-5 space-y-3">
+            <div class="bg-white/5 rounded-xl p-3">
+              <p class="text-xs text-sky-300">Flashcard</p>
+              <p class="text-sm mt-1">Apprends une notion clé en quelques secondes.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-white/5 rounded-xl p-3">
+                <p class="text-xs text-white/50">Cartes</p>
+                <p class="font-bold">124</p>
+              </div>
+              <div class="bg-white/5 rounded-xl p-3">
+                <p class="text-xs text-white/50">QCM</p>
+                <p class="font-bold">48</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Features detailed -->
+    <section class="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+        <h3 class="font-semibold">Flashcards</h3>
+        <p class="text-sm text-white/60 mt-1">Fiches rapides et efficaces.</p>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+        <h3 class="font-semibold">QCM</h3>
+        <p class="text-sm text-white/60 mt-1">Teste tes connaissances.</p>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+        <h3 class="font-semibold">Organisation</h3>
+        <p class="text-sm text-white/60 mt-1">Par thèmes et chapitres.</p>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+        <h3 class="font-semibold">Mobile</h3>
+        <p class="text-sm text-white/60 mt-1">Révise partout.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-white/40 mt-16">
+      StudLab — Bientôt disponible
+    </footer>
+
+  </main>
+
 </body>
 </html>
